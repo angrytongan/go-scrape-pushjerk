@@ -1,8 +1,9 @@
 module pj
 
-go 1.21.5
+go 1.22.1
 
 require (
+	github.com/go-chi/chi/v5 v5.0.11
 	github.com/gocolly/colly v1.2.0
 	github.com/mattn/go-sqlite3 v1.14.19
 )
@@ -13,7 +14,6 @@ require (
 	github.com/antchfx/htmlquery v1.3.0 // indirect
 	github.com/antchfx/xmlquery v1.3.18 // indirect
 	github.com/antchfx/xpath v1.2.5 // indirect
-	github.com/go-chi/chi/v5 v5.0.11 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

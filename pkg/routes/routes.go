@@ -22,6 +22,7 @@ func New(db *sql.DB) chi.Router {
 	r.Use(middleware.Logger)
 	r.Get("/", h.Home)
 	r.Get("/random", h.Random)
+	r.Get("/workout/{id}", h.Workout)
 
 	return r
 }
@@ -60,4 +61,23 @@ func (h *DBHandler) Random(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "text/html; charset=utf-8")
 	w.Write([]byte(fmt.Sprintf("random - %s %s %s", workout.id, workout.title, strings.ReplaceAll(workout.content, "\n", "<br />"))))
+}
+
+func (h *DBHandler) Workout(w http.ResponseWriter, r *http.Request) {
+	var workout Workout
+
+	id := chi.URLParam(r, "id")
+	q := fmt.Sprintf("SELECT id, title, content FROM posts WHERE id = 'post-%s'", id)
+
+	fmt.Println(q)
+
+	row := h.db.QueryRow(q, id)
+	err := row.Scan(&workout.id, &workout.title, &workout.content)
+	if err != nil {
+		log.Printf("failed to scan workout: %w\n", err)
+		http.Error(w, "failed to scan workout", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-type", "text/html; charset=utf-8")
+	w.Write([]byte(fmt.Sprintf("%s\n%s\n%s", workout.id, workout.title, strings.ReplaceAll(workout.content, "\n", "<br />"))))
 }
