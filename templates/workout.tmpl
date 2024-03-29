@@ -1,0 +1,10 @@
+{{block "workout" .}}
+    {{template "top" .}}
+    {{template "nav" .}}
+
+    <h1>{{.Workout.ID}} - {{.Workout.Title}}</h1>
+
+    <pre>{{.Workout.Content}}</pre>
+
+    {{template "bottom" .}}
+{{end}}
