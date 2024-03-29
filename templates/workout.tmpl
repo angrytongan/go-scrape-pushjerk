@@ -3,6 +3,12 @@
     {{template "nav" .}}
 
     <h1>{{.Workout.ID}} - {{.Workout.Title}}</h1>
+    {{if .PreID}}
+        <a href="/workout/{{.PreID}}">&lt; {{.PreID}}</a>
+    {{end}}
+    {{if .PostID}}
+        <a href="/workout/{{.PostID}}">{{.PostID}} &gt;</a>
+    {{end}}
 
     <pre>{{.Workout.Content}}</pre>
 

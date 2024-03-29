@@ -104,19 +104,92 @@ func (app *Application) Random(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/workout/"+strconv.Itoa(id), http.StatusFound)
 }
 
+func (app *Application) prePostWorkouts(id int) (int, int) {
+	var preID, thisID, postID int
+	q := fmt.Sprintf(`
+		WITH
+			parsed_posts AS (
+				SELECT
+					CAST(SUBSTR(posts.id, 6) AS INTEGER) AS id
+				FROM
+					posts
+			),
+			numbered_posts AS (
+				SELECT
+					id,
+					row_number() OVER (ORDER BY id) as rownum
+				FROM
+					parsed_posts
+			),
+			current AS (
+				SELECT
+					rownum
+				FROM
+					numbered_posts
+				WHERE
+					id = %d
+			)
+
+		SELECT
+			numbered_posts.id
+		FROM
+			numbered_posts, current
+		WHERE
+			ABS(numbered_posts.rownum - current.rownum) <= 1
+		ORDER BY
+			numbered_posts.rownum
+	`, id)
+	rows, err := app.db.Query(q)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		if err := rows.Scan(&preID); err != nil {
+			panic(err)
+		}
+	}
+
+	if rows.Next() {
+		if err := rows.Scan(&thisID); err != nil {
+			panic(err)
+		}
+	}
+
+	if rows.Next() {
+		if err := rows.Scan(&postID); err != nil {
+			panic(err)
+		}
+	}
+
+	if preID == id { // we have no previous record
+		postID = thisID
+		preID = 0
+	}
+
+	return preID, postID
+}
+
 func (app *Application) Workout(w http.ResponseWriter, r *http.Request) {
 	var workout Workout
 
-	id := chi.URLParam(r, "id")
-	q := fmt.Sprintf("SELECT id, title, content FROM posts WHERE id = 'post-%s'", id)
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		panic(err)
+	}
+	q := fmt.Sprintf("SELECT id, title, content FROM posts WHERE id = 'post-%d'", id)
 
-	row := app.db.QueryRow(q, id)
+	row := app.db.QueryRow(q) //, id)
 	if err := row.Scan(&workout.ID, &workout.Title, &workout.Content); err != nil {
 		panic(err)
 	}
 
+	preID, postID := app.prePostWorkouts(id)
 	pageData := map[string]any{
 		"Workout": workout,
+		"PreID":   preID,
+		"PostID":  postID,
 	}
 	app.render(w, "workout", pageData, http.StatusOK)
 }
