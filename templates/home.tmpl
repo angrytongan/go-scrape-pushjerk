@@ -1,0 +1,35 @@
+{{block "top" .}}
+    <!doctype html>
+
+    <html>
+        <head>
+        </head>
+
+        <body>
+{{end}}
+
+{{block "bottom" .}}
+        </body>
+    </html>
+{{end}}
+
+{{block "nav" .}}
+    <ul>
+        <li><a href="/">home</a></li>
+        <li><a href="/random">random</a></li>
+    </ul>
+{{end}}
+
+{{block "home" .}}
+    {{template "top" .}}
+    {{template "nav" .}}
+
+    <p>{{len .Workouts}} workouts</p>
+
+    <p>{{range .Workouts}}
+        <a href="/workout/{{.ID}}">{{.ID}}</a>
+    {{end}}
+    </p>
+
+    {{template "bottom" .}}
+{{end}}
