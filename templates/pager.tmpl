@@ -1,8 +1,11 @@
 {{block "pager" .}}
+    <p>
     {{if .HasPrev}}
+        <a href="/">&lt;&lt; Start</a>
         <a href="/?offset={{minus .Offset .Limit}}&limit={{.Limit}}">&lt; Recent</a>
     {{end}}
     {{if .HasNext}}
         <a href="/?offset={{plus .Offset .Limit}}&limit={{.Limit}}">Older &gt;</a>
     {{end}}
+    </p>
 {{end}}

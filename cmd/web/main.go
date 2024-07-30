@@ -14,6 +14,7 @@ import (
 )
 
 const port = 4000
+const maxWorkoutsPerPage = 20
 
 type Workout struct {
 	ID      string
@@ -77,7 +78,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	offset, err := strconv.Atoi(r.FormValue("offset"))
 	limit, err := strconv.Atoi(r.FormValue("limit"))
 	if limit == 0 {
-		limit = 10
+		limit = maxWorkoutsPerPage
 	}
 	prev := offset > 0
 	next := offset+limit < maxWorkouts
