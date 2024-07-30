@@ -76,7 +76,7 @@ func main() {
 	c.OnHTML("article", func(e *colly.HTMLElement) {
 		id := e.Attr("id")
 		title := e.ChildText("h2.entry-title")
-		content := e.ChildText("div.entry-content")
+		content, _ := e.DOM.Html()
 
 		_, err := db.Exec("insert into posts (id, title, content) values (?, ?, ?)",
 			id, title, content)

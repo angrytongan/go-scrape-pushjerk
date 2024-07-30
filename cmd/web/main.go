@@ -18,7 +18,7 @@ const port = 4000
 type Workout struct {
 	ID      string
 	Title   string
-	Content string
+	Content template.HTML
 }
 
 type Application struct {
@@ -182,8 +182,16 @@ func (app *Application) Workout(w http.ResponseWriter, r *http.Request) {
 
 	row := app.db.QueryRow(q) //, id)
 	if err := row.Scan(&workout.ID, &workout.Title, &workout.Content); err != nil {
-		panic(err)
+		if err == sql.ErrNoRows {
+			pageData := map[string]any{
+				"ID": id,
+			}
+			app.render(w, "no-such-workout", pageData, http.StatusOK)
+			return
+		}
 	}
+
+	workout.Content = template.HTML(workout.Content)
 
 	preID, postID := app.prePostWorkouts(id)
 	pageData := map[string]any{

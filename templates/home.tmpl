@@ -26,10 +26,11 @@
 
     <p>{{len .Workouts}} workouts</p>
 
-    <p>{{range .Workouts}}
-        <a href="/workout/{{.ID}}">{{.ID}}</a>
-    {{end}}
-    </p>
+    <ul>
+        {{range .Workouts}}
+            <li><a href="/workout/{{.ID}}">{{.ID}} - {{.Title}}</a></li>
+        {{end}}
+    </ul>
 
     {{template "bottom" .}}
 {{end}}
