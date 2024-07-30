@@ -27,7 +27,15 @@ type Application struct {
 }
 
 func New() *Application {
-	tpl := template.Must(template.ParseGlob("templates/*.tmpl"))
+	tpl := template.New("").Funcs(template.FuncMap{
+		"minus": func(a, b int) int {
+			return a - b
+		},
+		"plus": func(a, b int) int {
+			return a + b
+		},
+	})
+	tpl = template.Must(tpl.ParseGlob("templates/*.tmpl"))
 
 	db, err := sql.Open("sqlite3", "database.db")
 	if err != nil {
@@ -53,7 +61,29 @@ func (app *Application) render(w http.ResponseWriter, pageName string, pageData 
 }
 
 func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
-	rows, err := app.db.Query(`
+	err := r.ParseForm()
+	if err != nil {
+		panic(err)
+	}
+
+	// Determine number of workouts in database.
+	row := app.db.QueryRow("SELECT count(id) AS maxworkouts FROM posts")
+	var maxWorkouts int
+	if err := row.Scan(&maxWorkouts); err != nil {
+		panic(err)
+	}
+
+	// Figure out where we are.
+	offset, err := strconv.Atoi(r.FormValue("offset"))
+	limit, err := strconv.Atoi(r.FormValue("limit"))
+	if limit == 0 {
+		limit = 10
+	}
+	prev := offset > 0
+	next := offset+limit < maxWorkouts
+
+	// Grab page of workouts.
+	rows, err := app.db.Query(fmt.Sprintf(`
 	SELECT
 		CAST(SUBSTR(id, 6) AS INTEGER) AS id,
 		title
@@ -61,7 +91,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		posts
 	ORDER BY
 		id DESC
-	`)
+	LIMIT %d OFFSET %d`, limit, offset))
 	if err != nil {
 		panic(err)
 	}
@@ -77,7 +107,12 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	}
 
 	pageData := map[string]any{
-		"Workouts": workouts,
+		"Workouts":    workouts,
+		"MaxWorkouts": maxWorkouts,
+		"Offset":      offset,
+		"Limit":       limit,
+		"HasPrev":     prev,
+		"HasNext":     next,
 	}
 
 	app.render(w, "home", pageData, http.StatusOK)

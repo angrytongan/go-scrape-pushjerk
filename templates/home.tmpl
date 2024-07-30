@@ -24,13 +24,15 @@
     {{template "top" .}}
     {{template "nav" .}}
 
-    <p>{{len .Workouts}} workouts</p>
+    <p>{{.MaxWorkouts}} workouts in total</p>
 
     <ul>
         {{range .Workouts}}
             <li><a href="/workout/{{.ID}}">{{.ID}} - {{.Title}}</a></li>
         {{end}}
     </ul>
+
+    {{template "pager" .}}
 
     {{template "bottom" .}}
 {{end}}
