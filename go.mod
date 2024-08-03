@@ -3,6 +3,7 @@ module pj
 go 1.22.1
 
 require (
+	github.com/go-chi/chi/v5 v5.0.11
 	github.com/gocolly/colly v1.2.0
 	github.com/mattn/go-sqlite3 v1.14.19
 )
