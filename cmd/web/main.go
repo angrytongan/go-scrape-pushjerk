@@ -8,13 +8,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 const port = 4000
-const maxWorkoutsPerPage = 20
+const maxWorkoutsPerPage = 80
 
 type Workout struct {
 	ID      string
@@ -210,13 +208,18 @@ func (app *Application) prePostWorkouts(id int) (int, int) {
 func (app *Application) Workout(w http.ResponseWriter, r *http.Request) {
 	var workout Workout
 
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		panic(err)
+		pageData := map[string]any{
+			"ID": id,
+		}
+		app.render(w, "no-such-workout", pageData, http.StatusOK)
+		return
 	}
+
 	q := fmt.Sprintf("SELECT id, title, content FROM posts WHERE id = 'post-%d'", id)
 
-	row := app.db.QueryRow(q) //, id)
+	row := app.db.QueryRow(q)
 	if err := row.Scan(&workout.ID, &workout.Title, &workout.Content); err != nil {
 		if err == sql.ErrNoRows {
 			pageData := map[string]any{
@@ -242,15 +245,11 @@ func main() {
 	app := New()
 	defer app.Close()
 
-	// Router setup.
-	r := chi.NewRouter()
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", app.Home)
+	mux.HandleFunc("GET /random", app.Random)
+	mux.HandleFunc("GET /workout/{id}", app.Workout)
 
-	r.Use(middleware.Logger)
-	r.Get("/", app.Home)
-	r.Get("/random", app.Random)
-	r.Get("/workout/{id}", app.Workout)
-
-	// Run application.
 	fmt.Printf("listening on port %d\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), mux))
 }
