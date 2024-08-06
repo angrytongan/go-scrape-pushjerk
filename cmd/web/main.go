@@ -14,7 +14,7 @@ import (
 )
 
 const port = 4000
-const maxWorkoutsPerPage = 20
+const maxWorkoutsPerPage = 100
 
 type Workout struct {
 	ID      string
@@ -242,15 +242,16 @@ func main() {
 	app := New()
 	defer app.Close()
 
-	// Router setup.
 	r := chi.NewRouter()
-
 	r.Use(middleware.Logger)
+
+	fs := http.FileServer(http.Dir("./assets"))
+	r.Handle("/css/*", fs)
+
 	r.Get("/", app.Home)
 	r.Get("/random", app.Random)
 	r.Get("/workout/{id}", app.Workout)
 
-	// Run application.
 	fmt.Printf("listening on port %d\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
 }

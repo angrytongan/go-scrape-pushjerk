@@ -3,6 +3,7 @@
 
     <html>
         <head>
+            <link rel="stylesheet" href="/css/style.css" />
         </head>
 
         <body>
@@ -26,7 +27,7 @@
 
     <p>{{.MaxWorkouts}} workouts in total</p>
 
-    <ul>
+    <ul class="workouts">
         {{range .Workouts}}
             <li><a href="/workout/{{.ID}}">{{.ID}} - {{.Title}}</a></li>
         {{end}}

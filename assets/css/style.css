@@ -1,0 +1,5 @@
+.workouts {
+  display: grid;
+  grid-template-rows: repeat(20, 1em);
+  grid-auto-flow: column;
+}
