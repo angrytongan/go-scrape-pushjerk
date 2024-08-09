@@ -1,11 +1,17 @@
 {{block "pager" .}}
-    <p>
-    {{if .HasPrev}}
-        <a href="/">&lt;&lt; Start</a>
-        <a href="/?offset={{minus .Offset .Limit}}&limit={{.Limit}}">&lt; Recent</a>
-    {{end}}
-    {{if .HasNext}}
-        <a href="/?offset={{plus .Offset .Limit}}&limit={{.Limit}}">Older &gt;</a>
-    {{end}}
-    </p>
+    <div class="pager">
+        {{if gt (len .NumPages) 0}}
+        <ul>
+            {{range $k, $v := .NumPages}}
+                <li>
+                    {{if eq $k $.CurrPage}}
+                        {{$k}}
+                    {{else}}
+                        <a href="/?offset={{times $k $.Limit}}&limit={{$.Limit}}">{{$k}}</a>
+                     {{end}}
+                </li>
+            {{end}}
+        </ul>
+        {{end}}
+    </div>
 {{end}}

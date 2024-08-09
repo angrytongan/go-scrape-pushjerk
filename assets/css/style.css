@@ -3,3 +3,11 @@
   grid-template-rows: repeat(20, 1em);
   grid-auto-flow: column;
 }
+
+.pager ul {
+  list-style-type: none;
+}
+.pager ul li {
+  display: inline-block;
+  padding-left: 0.25em;
+}

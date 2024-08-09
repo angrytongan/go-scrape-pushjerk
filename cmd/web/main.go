@@ -29,6 +29,9 @@ type Application struct {
 
 func New() *Application {
 	tpl := template.New("").Funcs(template.FuncMap{
+		"times": func(a, b int) int {
+			return a * b
+		},
 		"minus": func(a, b int) int {
 			return a - b
 		},
@@ -61,6 +64,11 @@ func (app *Application) render(w http.ResponseWriter, pageName string, pageData 
 	}
 }
 
+func pager(offset, limit, maxElements int) (int, int) {
+	numPages := maxElements / limit
+	return numPages, offset / limit
+}
+
 func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -80,8 +88,8 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	if limit == 0 {
 		limit = maxWorkoutsPerPage
 	}
-	prev := offset > 0
-	next := offset+limit < maxWorkouts
+
+	numPages, currPage := pager(offset, limit, maxWorkouts)
 
 	// Grab page of workouts.
 	rows, err := app.db.Query(fmt.Sprintf(`
@@ -110,10 +118,9 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	pageData := map[string]any{
 		"Workouts":    workouts,
 		"MaxWorkouts": maxWorkouts,
-		"Offset":      offset,
 		"Limit":       limit,
-		"HasPrev":     prev,
-		"HasNext":     next,
+		"NumPages":    make([]int, numPages+1),
+		"CurrPage":    currPage,
 	}
 
 	app.render(w, "home", pageData, http.StatusOK)
@@ -245,8 +252,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	fs := http.FileServer(http.Dir("./assets"))
-	r.Handle("/css/*", fs)
+	r.Handle("/css/*", http.FileServer(http.Dir("./assets")))
 
 	r.Get("/", app.Home)
 	r.Get("/random", app.Random)
