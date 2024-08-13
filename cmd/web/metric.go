@@ -8,7 +8,7 @@ import (
 )
 
 func poundsToKilos(pounds int) int {
-	return int(math.Round(float64(pounds) / 2.2))
+	return int(math.Ceil(float64(pounds) / 2.2))
 }
 
 func inchesToCm(inches int) int {
