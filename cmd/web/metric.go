@@ -66,9 +66,7 @@ func Metricise(workout string) string {
 	cm := regexp.MustCompile(`(\d+)/(\d+)”`)
 
 	out := kilos.ReplaceAllStringFunc(workout, addKilos)
-	fmt.Println("first", out)
 	out = cm.ReplaceAllStringFunc(out, addCm)
-	fmt.Println("second", out)
 
 	return out
 }

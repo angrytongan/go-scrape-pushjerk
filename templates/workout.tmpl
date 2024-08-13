@@ -2,7 +2,7 @@
     {{template "top" .}}
     {{template "nav" .}}
 
-    <h1>{{.Workout.ID}} - {{.Workout.Title}}</h1>
+    <h2>{{.Workout.ID}} - {{.Workout.Title}}</h2>
     {{if .PostID}}
         <a href="/workout/{{.PostID}}">&lt; {{.PostID}}</a>
     {{end}}
