@@ -1,0 +1,55 @@
+{{block "top" .}}
+    <!doctype html>
+
+    <html>
+        <head>
+            <link rel="stylesheet" href="/css/style.css" />
+        </head>
+
+        <body>
+{{end}}
+
+{{block "bottom" .}}
+        </body>
+    </html>
+{{end}}
+
+{{block "nav" .}}
+    <div class="nav">
+        <h1><a href="https://pushjerk.com">pushJerk</a></h1>
+        <ul>
+            <li><a href="/">home</a></li>
+            <li><a href="/random">random</a></li>
+        </ul>
+    </div>
+{{end}}
+
+{{block "pager" .}}
+    <div class="pager">
+        {{if gt (len .NumPages) 0}}
+        <ul>
+            <li>{{- if ne $.CurrPage 0}}
+                <a href="/?offset={{times (minus $.CurrPage 1) $.Limit}}&limit={{$.Limit}}">&lt; prev</a>
+            {{else}}
+                &lt; prev
+            {{end -}}</li>
+
+            {{range $k, $v := .NumPages}}
+                <li>
+                    {{if eq $k $.CurrPage}}
+                        {{$k}}
+                    {{else}}
+                        <a href="/?offset={{times $k $.Limit}}&limit={{$.Limit}}">{{$k}}</a>
+                     {{end}}
+                </li>
+            {{end}}
+
+            <li>{{- if ne $.CurrPage (minus (len .NumPages) 1)}}
+                <a href="/?offset={{times (plus $.CurrPage 1) $.Limit}}&limit={{$.Limit}}">next &gt;</a>
+            {{else}}
+                next &gt;
+            {{end -}}</li>
+        </ul>
+        {{end}}
+    </div>
+{{end}}

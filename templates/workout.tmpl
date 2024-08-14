@@ -2,15 +2,19 @@
     {{template "top" .}}
     {{template "nav" .}}
 
-    <h2>{{.Workout.ID}} - {{.Workout.Title}}</h2>
-    {{if .PostID}}
-        <a href="/workout/{{.PostID}}">&lt; {{.PostID}}</a>
-    {{end}}
-    {{if .PreID}}
-        <a href="/workout/{{.PreID}}">{{.PreID}} &gt;</a>
-    {{end}}
+    <div class="main">
+        <h2>
+            {{- if .PostID}}
+                <a href="/workout/{{.PostID}}">&lt;</a>&nbsp;&nbsp;
+            {{end -}}
+                {{.Workout.ID}}
+            {{- if .PreID}}
+                &nbsp;&nbsp;<a href="/workout/{{.PreID}}">&gt;</a>
+            {{end -}}
+        </h2>
 
-    {{.Workout.Content}}
+        {{.Workout.Content}}
+    </div>
 
     {{template "bottom" .}}
 {{end}}

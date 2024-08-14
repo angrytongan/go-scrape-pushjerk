@@ -1,40 +1,18 @@
-{{block "top" .}}
-    <!doctype html>
-
-    <html>
-        <head>
-            <link rel="stylesheet" href="/css/style.css" />
-        </head>
-
-        <body>
-            <h1><a href="https://pushjerk.com">pushJerk</a></h1>
-{{end}}
-
-{{block "bottom" .}}
-        </body>
-    </html>
-{{end}}
-
-{{block "nav" .}}
-    <ul>
-        <li><a href="/">home</a></li>
-        <li><a href="/random">random</a></li>
-    </ul>
-{{end}}
-
 {{block "home" .}}
     {{template "top" .}}
     {{template "nav" .}}
 
-    <p>{{.MaxWorkouts}} workouts in total</p>
+    <div class="main">
+        <p>{{.MaxWorkouts}} workouts in total</p>
 
-    <ul class="workouts">
-        {{range .Workouts}}
-            <li><a href="/workout/{{.ID}}">{{.ID}} - {{.Title}}</a></li>
-        {{end}}
-    </ul>
+        <ul class="workouts">
+            {{range .Workouts}}
+                <li><a href="/workout/{{.ID}}">{{.ID}} - {{.Title}}</a></li>
+            {{end}}
+        </ul>
 
-    {{template "pager" .}}
+        {{template "pager" .}}
+    </div>
 
     {{template "bottom" .}}
 {{end}}

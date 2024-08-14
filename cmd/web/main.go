@@ -14,7 +14,7 @@ import (
 )
 
 const port = 4000
-const maxWorkoutsPerPage = 100
+const maxWorkoutsPerPage = 160
 
 type Workout struct {
 	ID      string
