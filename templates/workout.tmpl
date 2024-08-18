@@ -4,12 +4,12 @@
 
     <div class="main">
         <h2>
-            {{- if .PostID}}
-                <a href="/workout/{{.PostID}}">&lt;</a>&nbsp;&nbsp;
+            {{- if .PreID}}
+                &nbsp;&nbsp;<a href="/workout/{{.PreID}}">&lt;</a>
             {{end -}}
                 {{.Workout.ID}}
-            {{- if .PreID}}
-                &nbsp;&nbsp;<a href="/workout/{{.PreID}}">&gt;</a>
+            {{- if .PostID}}
+                <a href="/workout/{{.PostID}}">&gt;</a>&nbsp;&nbsp;
             {{end -}}
         </h2>
 
