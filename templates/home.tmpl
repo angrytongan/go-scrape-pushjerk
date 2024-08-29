@@ -3,7 +3,10 @@
     {{template "nav" .}}
 
     <div class="main">
-        <p>{{.MaxWorkouts}} workouts in total</p>
+            <span>{{.MaxWorkouts}} workouts</span>
+            <form method="GET">
+                <input type="text" name="filter">
+            </form>
 
         <ul class="workouts">
             {{range .Workouts}}

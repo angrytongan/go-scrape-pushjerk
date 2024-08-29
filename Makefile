@@ -1,5 +1,7 @@
 .PHONY: web scrape help
 
+.DEFAULT_GOAL: help
+
 help:
 	@echo "make web - run web server"
 	@echo "make scrape-tsv - run scraper and write to stdout as tsv"

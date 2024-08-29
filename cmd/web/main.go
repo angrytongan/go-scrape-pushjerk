@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -75,8 +76,17 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	filter := strings.Replace(r.FormValue("filter"), "+", " ", -1)
+
 	// Determine number of workouts in database.
-	row := app.db.QueryRow("SELECT count(id) AS maxworkouts FROM posts")
+	row := app.db.QueryRow(fmt.Sprintf(`
+	SELECT
+		count(id) AS maxworkouts
+	FROM
+		posts
+	WHERE
+		content like '%%%s%%'
+	`, filter))
 	var maxWorkouts int
 	if err := row.Scan(&maxWorkouts); err != nil {
 		panic(err)
@@ -98,9 +108,11 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		title
 	FROM
 		posts
+	WHERE
+		content like '%%%s%%'
 	ORDER BY
 		id DESC
-	LIMIT %d OFFSET %d`, limit, offset))
+	LIMIT %d OFFSET %d`, filter, limit, offset))
 	if err != nil {
 		panic(err)
 	}
@@ -121,6 +133,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		"Limit":       limit,
 		"NumPages":    make([]int, numPages+1),
 		"CurrPage":    currPage,
+		"Filter":      filter,
 	}
 
 	app.render(w, "home", pageData, http.StatusOK)
