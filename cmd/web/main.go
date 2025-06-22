@@ -86,7 +86,8 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		posts
 	WHERE
 		content like '%%%s%%'
-	`, filter))
+		OR id like '%%%s%%'
+	`, filter, filter))
 	var maxWorkouts int
 	if err := row.Scan(&maxWorkouts); err != nil {
 		panic(err)
@@ -110,9 +111,10 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		posts
 	WHERE
 		content like '%%%s%%'
+		OR id like '%%%s%%'
 	ORDER BY
 		id DESC
-	LIMIT %d OFFSET %d`, filter, limit, offset))
+	LIMIT %d OFFSET %d`, filter, filter, limit, offset))
 	if err != nil {
 		panic(err)
 	}
@@ -270,6 +272,7 @@ func main() {
 	r.Get("/", app.Home)
 	r.Get("/random", app.Random)
 	r.Get("/workout/{id}", app.Workout)
+	r.Get("/print-range", app.PrintRange)
 
 	fmt.Printf("listening on port %d\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))

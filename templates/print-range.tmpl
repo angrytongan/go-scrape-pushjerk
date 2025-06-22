@@ -1,0 +1,31 @@
+{{block "print-range" .}}
+    {{template "top" .}}
+    {{template "nav" .}}
+
+    <div class="print-range">
+      <form method="GET">
+        <input type="date" name="start" {{if .Fields.Start}}value="{{.Fields.Start}}"{{end}} />
+        {{if .Errors.Start}}<span class="error">{{.Errors.Start}}</span>{{end}}
+
+        <input type="date" name="finish" {{if .Fields.Finish}}value="{{.Fields.Finish}}"{{end}} />
+        {{if .Errors.Finish}}<span class="error">{{.Errors.Finish}}</span>{{end}}
+
+        <input type="submit" />
+      </form>
+
+      {{if eq (len .Workouts) 0}}
+        <p>No workouts found in range!</p>
+      {{else}}
+        <div class="workouts">
+          {{range .Workouts}}
+            <div class="workout">
+                {{.}}
+            </div>
+            <div class="page-break"></div>
+          {{end}}
+        </div>
+      {{end}}
+    </div>
+
+    {{template "bottom" .}}
+{{end}}
