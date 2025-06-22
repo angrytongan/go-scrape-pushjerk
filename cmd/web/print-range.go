@@ -9,6 +9,7 @@ import (
 const (
 	sqlWorkouts = `
 SELECT
+	id,
 	content
 FROM
 	posts
@@ -31,7 +32,10 @@ func (app *Application) PrintRange(w http.ResponseWriter, r *http.Request) {
 	}
 
 	errs := map[string]string{}
-	workouts := []template.HTML{}
+	workouts := []struct {
+		ID      string
+		Content template.HTML
+	}{}
 	fields := map[string]string{}
 
 	start := values.Get("start")
@@ -51,14 +55,17 @@ func (app *Application) PrintRange(w http.ResponseWriter, r *http.Request) {
 			errs["Query"] = fmt.Sprintf("app.db.Query(%s, %s): %v", start, finish, err)
 		} else {
 			for rows.Next() {
-				var content template.HTML
+				var workout struct {
+					ID      string
+					Content template.HTML
+				}
 
-				if err := rows.Scan(&content); err != nil {
+				if err := rows.Scan(&workout.ID, &workout.Content); err != nil {
 					errs["Results"] = fmt.Sprintf("rows.Scan(): %v", err)
 					break
 				} else {
-					out := template.HTML(Metricise(string(content)))
-					workouts = append(workouts, out)
+					workout.Content = template.HTML(Metricise(string(workout.Content)))
+					workouts = append(workouts, workout)
 				}
 			}
 		}

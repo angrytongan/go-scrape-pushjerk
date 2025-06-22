@@ -13,15 +13,18 @@
         <input type="submit" />
       </form>
 
+      {{if .Errors.Results}}<p>{{.Errors.Results}}</p>{{end}}
+
       {{if eq (len .Workouts) 0}}
         <p>No workouts found in range!</p>
       {{else}}
         <div class="workouts">
           {{range .Workouts}}
             <div class="workout">
-                {{.}}
+              {{.Content}}
             </div>
-            <div class="page-break"></div>
+            <hr />
+            <p class="workout-id">Workout ID: {{.ID}}</p>
           {{end}}
         </div>
       {{end}}

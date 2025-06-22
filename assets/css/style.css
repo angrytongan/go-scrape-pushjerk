@@ -41,7 +41,8 @@ h2,
 
 time.updated,
 time.published,
-.byline {
+.byline,
+.cat-links {
   display: none;
 }
 
@@ -60,7 +61,8 @@ time.published,
   .print-range .workout {
     column-count: 2;
   }
-  .print-range .page-break {
-    break-before: page;
+  .print-range .workout-id {
+    font-size: small;
+    break-after: page;
   }
 }
