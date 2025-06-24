@@ -62,7 +62,10 @@ time.published,
     column-count: 2;
   }
   .print-range .workout-id {
-    font-size: small;
+    font-size: smaller;
     break-after: page;
+  }
+  .print-range hr {
+    margin-top: 2em;
   }
 }
