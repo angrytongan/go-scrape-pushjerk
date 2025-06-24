@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"pj/internal/metricise"
 )
 
 const (
@@ -64,7 +65,7 @@ func (app *Application) PrintRange(w http.ResponseWriter, r *http.Request) {
 					errs["Results"] = fmt.Sprintf("rows.Scan(): %v", err)
 					break
 				} else {
-					workout.Content = template.HTML(Metricise(string(workout.Content)))
+					workout.Content = template.HTML(metricise.Metricise(string(workout.Content)))
 					workouts = append(workouts, workout)
 				}
 			}

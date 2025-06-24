@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"pj/internal/metricise"
 	"strconv"
 	"strings"
 
@@ -249,7 +250,7 @@ func (app *Application) Workout(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	workout.Content = template.HTML(Metricise(string(workout.Content)))
+	workout.Content = template.HTML(metricise.Metricise(string(workout.Content)))
 
 	preID, postID := app.prePostWorkouts(id)
 	pageData := map[string]any{
