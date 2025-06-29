@@ -16,19 +16,17 @@
       {{if .Errors.Results}}<p>{{.Errors.Results}}</p>{{end}}
 
       {{if .Workouts}}
-        {{if eq (len .Workouts) 0}}
-          <p>No workouts found in range!</p>
-        {{else}}
-          <div class="workouts">
-            {{range .Workouts}}
-              <div class="workout">
-                {{.Content}}
-              </div>
-              <hr />
-              <p class="workout-id">Workout ID: {{.ID}}</p>
-            {{end}}
-          </div>
-        {{end}}
+        <div class="workouts">
+          {{range .Workouts}}
+            <div class="workout">
+              {{.Content}}
+            </div>
+            <hr />
+            <p class="workout-id">Workout ID: {{.ID}}</p>
+          {{end}}
+        </div>
+      {{else}}
+        <p>No workouts.</p>
       {{end}}
     </div>
 

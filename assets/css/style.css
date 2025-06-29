@@ -46,6 +46,10 @@ time.published,
   display: none;
 }
 
+.error {
+  color: red;
+}
+
 @media print {
   .nav {
     display: none;
