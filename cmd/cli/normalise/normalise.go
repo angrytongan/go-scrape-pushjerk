@@ -14,11 +14,11 @@ type TagRemoval struct {
 var (
 	tagCleaning = []TagRemoval{
 		// Tags to delete.
-		{From: `\r`, To: ""}, // newlines
-		{From: `\n`, To: ""}, // newlines
-		{From: `\t`, To: ""}, // tabs
-		//{From: `<br *?/>`, To: ""},                // breaks
-		{From: `<em>`, To: " "},                   // emphasis
+		{From: `\r`, To: ""},                      // newlines
+		{From: `\n`, To: ""},                      // newlines
+		{From: `\t`, To: ""},                      // tabs
+		{From: `<br *?/>`, To: ""},                // breaks
+		{From: `<em>`, To: ""},                    // emphasis
 		{From: `</em>`, To: " "},                  // closing emphasis
 		{From: `•`, To: " "},                      /* weird utf thing */
 		{From: `<a.*?>`, To: " "},                 // anchors
@@ -36,15 +36,25 @@ var (
 		{From: `</h2>`, To: " "},                  // closing 2nd header
 		{From: `<p.*?>`, To: " "},                 // paragraphs
 		{From: `</p>`, To: " "},                   // closing paragraphs
-		{From: `<em> </em>`, To: " "},             // empty em tags
+		{From: `<em> </em>`, To: ""},              // empty em tags
+
+		// Remove gross sections.
+		{From: `<strong><em>Rest.*?</em></strong`, To: ""}, // Not a section.
+		{From: `<strong>HAPPY.*?</strong>`, To: ""},        // Greetings not a section.
+		{From: `<strong>MERRY.*?</strong>`, To: ""},        // Greetings not a section.
+		{From: `<strong></strong>`, To: ""},                // Not a section.
 
 		// Dedupe spaces.
 		{From: ` +`, To: " "},
+
+		{From: `<strong><br/></strong>`, To: ""},   // Not a section.
+		{From: `<strong>Rest.*?</strong>`, To: ""}, // "Rest" shouldn't be a section
 
 		/*
 			// Uncommon strings inside <strong> tags.
 			{From: `<p><strong>CROSSFIT GAMES WEEK</strong></p>`, To: ""},
 			{From: `<p><strong>HAPPY.*?</strong></p>`, To: ""},
+			{From: `<p><strong>Happy.*?</strong></p>`, To: ""},
 			{From: `<p><strong>–.*OPTION.*?</strong></p>`, To: ""},
 			{From: `<p><em>Week [56]/16`, To: `<strong>Strength</strong><p><em>Week 5/16`},
 			{From: `</em></strong><em>21-15-9 reps:</em><br/>`, To: " "},
@@ -53,9 +63,9 @@ var (
 			{From: `<strong><br/><em>4 rounds:</em><br/></strong>`, To: " "},
 
 			// Identifiers.
-			{From: `</strong>`, To: " "},          // Delete ending strong tags.
 			{From: "<strong> *?", To: "<strong>"}, //
 		*/
+		{From: `</strong>`, To: " "}, // Delete ending strong tags.
 	}
 )
 
@@ -64,9 +74,10 @@ type WorkoutSection struct {
 	Content string
 }
 
-func cleanTags(src string) string {
+func clean(src string) string {
 	for _, pattern := range tagCleaning {
 		re := regexp.MustCompile(pattern.From)
+		// fmt.Println(pattern.From, src)
 		src = re.ReplaceAllLiteralString(src, pattern.To)
 	}
 
@@ -76,7 +87,7 @@ func cleanTags(src string) string {
 func normalise(src string) []WorkoutSection {
 	workoutSections := []WorkoutSection{}
 
-	cleaned := cleanTags(metricise.Metricise(src))
+	cleaned := clean(metricise.Metricise(src))
 
 	// sections identified with <strong>.*</strong>
 	// split at that tag

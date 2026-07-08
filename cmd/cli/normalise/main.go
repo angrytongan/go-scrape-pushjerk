@@ -17,8 +17,8 @@ const (
 			id, title, date, content
 		FROM
 			posts
-		--WHERE
-		  --ID IN ("post-8912")
+		-- WHERE
+		  -- ID IN ("post-8912")
 		ORDER BY date DESC
 	`
 )
